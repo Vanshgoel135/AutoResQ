@@ -2,6 +2,7 @@ package com.autoresq.user.service.impl;
 import com.autoresq.user.service.UserService;
 import com.autoresq.user.dto.RegisterRequest;
 import com.autoresq.user.entity.User;
+import com.autoresq.user.dto.LoginRequest;
 import com.autoresq.user.repository.UserRepository;
 import com.autoresq.user.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,5 +36,17 @@ public class UserServiceImpl implements UserService {
         user.setRole("USER");
 
         userRepository.save(user);
+    }
+    @Override
+    public String login(LoginRequest request) {
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid Password");
+        }
+
+        return "Login Successful";
     }
 }
