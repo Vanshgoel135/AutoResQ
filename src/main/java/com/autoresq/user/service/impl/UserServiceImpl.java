@@ -7,17 +7,20 @@ import com.autoresq.user.repository.UserRepository;
 import com.autoresq.user.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import com.autoresq.security.JwtUtil;
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final JwtUtil jwtUtil;
     public UserServiceImpl(UserRepository userRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           JwtUtil jwtUtil) {
+
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -47,6 +50,8 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Invalid Password");
         }
 
-        return "Login Successful";
+        String token = jwtUtil.generateToken(user.getEmail());
+
+        return token;
     }
 }
