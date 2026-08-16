@@ -1,47 +1,81 @@
 package com.autoresq.security;
+
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
+
 import javax.crypto.SecretKey;
-import javax.crypto.SecretKey;
-import io.jsonwebtoken.Jwts;
 import java.util.Date;
+
 @Component
 public class JwtUtil {
+
+    // Secret Key (Used for Signing JWT)
     private final SecretKey SECRET_KEY =
             Keys.secretKeyFor(SignatureAlgorithm.HS256);
-//bild the token
-public String generateToken(String email) {
 
-    return Jwts.builder()
-            .subject(email)
-            .issuedAt(new Date())
-            .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
-            .signWith(SECRET_KEY)
-            .compact();
+    // Token Validity (24 Hours)
+    private static final long EXPIRATION_TIME =
+            1000 * 60 * 60 * 24;
 
-}
-//read the token
-    public String extractEmail(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+    // ==============================
+    // Generate JWT Token
+    // ==============================
+    public String generateToken(String email) {
+
+        return Jwts.builder()
+                .subject(email)                      // User Email
+                .issuedAt(new Date())                // Token Created Time
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(SECRET_KEY)                // Digital Signature
+                .compact();                          // Convert into String Token
     }
-    //Token original hai ya nahi.Secret Key sahi hai ya nahi.Token expire hua ya nahi.
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(SECRET_KEY)
-                    .build()
-                    .parseClaimsJws(token);
 
-            return true;
+    // ==============================
+    // Extract All Claims
+    // ==============================
+    public Claims extractAllClaims(String token) {
+
+        return Jwts.parser()
+                .verifyWith(SECRET_KEY)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    // ==============================
+    // Extract Email
+    // ==============================
+    public String extractEmail(String token) {
+
+        return extractAllClaims(token).getSubject();
+    }
+
+    // ==============================
+    // Check Token Expired
+    // ==============================
+    public boolean isTokenExpired(String token) {
+
+        return extractAllClaims(token)
+                .getExpiration()
+                .before(new Date());
+    }
+
+    // ==============================
+    // Validate Token
+    // ==============================
+    public boolean validateToken(String token) {
+
+        try {
+
+            return !isTokenExpired(token);
+
         } catch (Exception e) {
+
             return false;
         }
     }
+
 }
