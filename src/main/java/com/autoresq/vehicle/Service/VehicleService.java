@@ -5,6 +5,11 @@ import com.autoresq.vehicle.dto.VehicleRequest;
 import com.autoresq.vehicle.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 @Service
 public class VehicleService {
 
@@ -57,5 +62,17 @@ public class VehicleService {
 
         vehicleRepository.delete(vehicle);
         return vehicle;
+    }
+    public Page<Vehicle> getAllVehicles(int page, int size, String sortBy) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+
+        return vehicleRepository.findAll(pageable);
+    }
+    public List<Vehicle>searchByOwnerName(String ownerName){
+        return vehicleRepository.findByOwnerName(ownerName);
+    }
+    public Optional<Vehicle> searchByVehicleNumber(String vehicleNumber) {
+        return vehicleRepository.findByVehicleNumber(vehicleNumber);
     }
 }
