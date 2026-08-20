@@ -24,25 +24,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Authorization Header read karo
+        String path = request.getServletPath();
+
+        // Swagger endpoints ko skip karo
+        if (path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs")
+                || path.equals("/swagger-ui.html")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // Authorization Header
         String authHeader = request.getHeader("Authorization");
 
-        // Agar token nahi hai to request ko aage bhej do
+        // Agar Bearer token nahi hai to request aage bhej do
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // "Bearer " hata kar sirf token nikalo
+        // Token nikalo
         String token = authHeader.substring(7);
 
-        // Token se email extract karo
+        // Email extract karo
         String email = jwtUtil.extractEmail(token);
 
-        // Check karne ke liye console me print
         System.out.println("Logged In User: " + email);
 
-        // Request ko aage bhej do
+        // Request continue
         filterChain.doFilter(request, response);
     }
 
