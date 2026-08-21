@@ -4,9 +4,9 @@ import com.autoresq.user.dto.RegisterRequest;
 import com.autoresq.user.entity.User;
 import com.autoresq.user.dto.LoginRequest;
 import com.autoresq.user.repository.UserRepository;
-import com.autoresq.user.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.autoresq.security.Role;
 import com.autoresq.security.JwtUtil;
 @Service
 public class UserServiceImpl implements UserService {
@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
         // Password ko BCrypt se encode karke save karna
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        user.setRole("USER");
+        user.setRole(Role.USER);
 
         userRepository.save(user);
     }

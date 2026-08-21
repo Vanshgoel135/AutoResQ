@@ -23,7 +23,7 @@ public class JwtUtil {
     // ==============================
     // Generate JWT Token
     // ==============================
-    public String generateToken(String email) {
+    public String generateToken(String email, String role) {
 
         return Jwts.builder()
                 .subject(email)                      // User Email
@@ -76,6 +76,9 @@ public class JwtUtil {
 
             return false;
         }
+    }
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
     }
 
 }

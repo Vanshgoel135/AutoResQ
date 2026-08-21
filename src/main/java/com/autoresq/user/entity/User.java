@@ -1,6 +1,9 @@
 package com.autoresq.user.entity;
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
+import com.autoresq.security.Role;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 @Entity
 @Table(name="users")
 public class User {
@@ -12,7 +15,8 @@ public class User {
         private String    email;
    private Long phone;
         private String    password;
-   private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -64,14 +68,6 @@ public class User {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -86,5 +82,12 @@ public class User {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
