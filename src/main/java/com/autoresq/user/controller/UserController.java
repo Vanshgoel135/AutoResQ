@@ -3,6 +3,7 @@ package com.autoresq.user.controller;
 import com.autoresq.user.dto.RegisterRequest;
 import com.autoresq.user.service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,5 +25,14 @@ public UserController(UserService userService){
 
         return userService.login(request);
 
+    }
+    @GetMapping("/profile")
+    public String profile() {
+        return "Welcome User";
+    }
+
+    @GetMapping("/admin")
+    public String admin() {
+        return "Welcome Admin";
     }
 }

@@ -26,7 +26,8 @@ public class JwtUtil {
     public String generateToken(String email, String role) {
 
         return Jwts.builder()
-                .subject(email)                      // User Email
+                .subject(email)// User Email
+                .claim("role", role)
                 .issuedAt(new Date())                // Token Created Time
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SECRET_KEY)                // Digital Signature
@@ -52,7 +53,9 @@ public class JwtUtil {
 
         return extractAllClaims(token).getSubject();
     }
-
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
+    }
     // ==============================
     // Check Token Expired
     // ==============================
@@ -76,9 +79,6 @@ public class JwtUtil {
 
             return false;
         }
-    }
-    public String extractRole(String token) {
-        return extractAllClaims(token).get("role", String.class);
     }
 
 }

@@ -6,7 +6,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.List;
 import java.io.IOException;
 
 @Component
@@ -48,7 +52,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Email extract karo
         String email = jwtUtil.extractEmail(token);
+        String role = jwtUtil.extractRole(token);
 
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                        email,
+                        null,
+                        List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         System.out.println("Logged In User: " + email);
 
         // Request continue
